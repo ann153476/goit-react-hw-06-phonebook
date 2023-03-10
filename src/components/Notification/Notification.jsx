@@ -1,15 +1,9 @@
-import PropTypes from 'prop-types';
-
-const Notification = ({ message }) => {
+const Notification = () => {
   return (
     <div>
-      <h1>{message}</h1>
+      <h2>There is no contacts</h2>
     </div>
   );
-};
-
-Notification.propTypes = {
-  message: PropTypes.string.isRequired,
 };
 
 export default Notification;

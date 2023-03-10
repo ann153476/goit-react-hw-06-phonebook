@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
 
-import PropTypes from 'prop-types';
 import s from '../App.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact } from 'redux/contacts-slice';
 
-const initialState = {
-  name: '',
-  number: '',
-};
-
-const ContactForm = ({ onSubmit }) => {
-  const [state, setState] = useState({ ...initialState });
+const ContactForm = () => {
+  const [stateForm, setState] = useState({ name: '', number: '' });
+  const dispatch = useDispatch();
 
   const onInputChange = ({ target }) => {
     setState(prevState => {
       return { ...prevState, [target.name]: target.value };
     });
   };
-
+  const contacts = useSelector(state => state.contacts.contacts.contacts);
   const onFormSubmit = e => {
     e.preventDefault();
-
-    onSubmit({ ...state });
-
-    setState({ ...initialState });
+    if (contacts.find(({ name }) => name === stateForm.name)) {
+      setState({ name: '', number: '' });
+      return alert('already add');
+    }
+    dispatch(addContact(stateForm));
+    setState({ name: '', number: '' });
   };
 
   return (
@@ -31,7 +30,7 @@ const ContactForm = ({ onSubmit }) => {
         <label>
           Name
           <input
-            value={state.name}
+            value={stateForm.name}
             onChange={onInputChange}
             type="text"
             name="name"
@@ -44,7 +43,7 @@ const ContactForm = ({ onSubmit }) => {
         <label>
           Number
           <input
-            value={state.number}
+            value={stateForm.number}
             onChange={onInputChange}
             type="tel"
             name="number"
@@ -60,10 +59,6 @@ const ContactForm = ({ onSubmit }) => {
       </form>
     </div>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;

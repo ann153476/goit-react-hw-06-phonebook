@@ -1,38 +1,42 @@
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'redux/contacts-slice';
 import s from '../App.module.css';
 
-const ContactList = ({ contacts, onDeleteContact }) => (
-  <div>
-    <ul>
-      {contacts.map(({ id, name, number }) => (
-        <li key={id} className={s.flex}>
-          <div className={s.box__contact}>
-            <p>{name}</p>
-            <p>{number}</p>
-          </div>
+const ContactList = () => {
+  const contacts = useSelector(state => state.contacts.contacts.contacts);
 
-          <button
-            className={s.btn}
-            type="submit"
-            onClick={() => onDeleteContact(id)}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+  const filterValue = useSelector(state => state.contacts.contacts.filter);
+  const filterContacts = contacts.filter(
+    ({ name, number }) =>
+      name.toLowerCase().includes(filterValue) || number.includes(filterValue)
+  );
+  const dispatch = useDispatch();
+  return (
+    <div>
+      <ul>
+        {filterContacts.map(item => {
+          return (
+            <li key={item.id} className={s.flex}>
+              <div className={s.box__contact}>
+                <p>{item.name}</p>
+                <p>{item.number}</p>
+              </div>
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
-  onDeleteContact: PropTypes.func.isRequired,
+              <button
+                className={s.btn}
+                type="submit"
+                onClick={() => {
+                  dispatch(deleteContact(item.id));
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 };
 
 export default ContactList;
